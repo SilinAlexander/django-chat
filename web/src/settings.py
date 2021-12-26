@@ -30,7 +30,7 @@ USE_HTTPS = int(os.environ.get('USE_HTTPS', 0))
 ENABLE_SENTRY = int(os.environ.get('ENABLE_SENTRY', 0))
 ENABLE_SILK = int(os.environ.get('ENABLE_SILK', 0))
 ENABLE_DEBUG_TOOLBAR = int(os.environ.get('ENABLE_DEBUG_TOOLBAR', 0))
-ENABLE_RENDERING = int(os.environ.get('ENABLE_RENDERING', 0))
+ENABLE_RENDERING = int(os.environ.get('ENABLE_RENDERING', 1))
 
 INTERNAL_IPS = []
 
@@ -45,17 +45,22 @@ SWAGGER_URL = os.environ.get('SWAGGER_URL')
 API_KEY_HEADER = os.environ.get('API_KEY_HEADER')
 API_KEY = os.environ.get('API_KEY')
 
+API_BLOG_URL = os.environ.get('API_BLOG_URL', 'http://web:8000')
+API_BLOG_KEY = os.environ.get('API_BLOG_KEY')
+
 HEALTH_CHECK_URL = os.environ.get('HEALTH_CHECK_URL')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
 
 ]
 
@@ -69,6 +74,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'main.apps.MainConfig',
+    'chat.apps.ChatConfig',
 
 ]
 
@@ -131,7 +137,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'src.wsgi.application'
 ASGI_APPLICATION = 'src.asgi.application'
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('SQL_ENGINE'),
